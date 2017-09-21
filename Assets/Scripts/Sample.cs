@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sample : MonoBehaviour
+public class Sample : MonoBinding
 {
+    [InjectIt]
     TempInterface sample;
     // Use this for initialization
     void Start()
     {
-        ContainerContext.s_Instance.ToObject(sample);
-        sample = ContainerContext.s_Instance.GetDi();
+        var not = new NotMono();
+        Factory.Inject<NotMono>(ref not);
+        not.TempMethod();
         sample.Print();
     }
 
