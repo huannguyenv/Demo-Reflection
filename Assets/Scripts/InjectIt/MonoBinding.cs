@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonoBinding : MonoBehaviour
+namespace InjectIt
 {
+    public class MonoBinding : MonoBehaviour
+    {
 
+    }
 }

@@ -5,88 +5,94 @@ using System;
 using System.Reflection;
 using System.Linq;
 
-public class ContainerContext : MonoBehaviour
+namespace InjectIt
 {
-    public Installer[] installList;
-
-    public static ContainerContext s_Instance;
-
-    private BindingFlags m_Flag;
-
-    private void Awake()
+    public class ContainerContext : MonoBehaviour
     {
+        public Installer[] installList;
 
-        m_Flag = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        public static ContainerContext s_Instance;
 
-        foreach (var installer in installList)
+        private BindingFlags m_Flag;
+
+        private void Awake()
         {
-            installer.InstallBinding();
-        }
 
-        s_Instance = this;
+            m_Flag = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-        var tempAttribue = typeof(TempAttribute);
-        var injectAttribute = typeof(InjectItAttribute);
-        var notMonoAttribute = typeof(NotMonoAttribute);
-        //
-        var assembly = Assembly.GetExecutingAssembly();
-
-        var types = assembly.GetTypes();
-
-        //foreach(var type in types)
-        //{
-        //    if(Attribute.IsDefined(type, notMonoAttribute))
-        //    {
-        //        Debug.Log("Type not mono " + type.ToString());
-        //        FieldInfo[] fields = type.GetFields(m_Flag);
-        //        foreach (FieldInfo field in fields)
-        //        {
-        //            if (Attribute.IsDefined(field, injectAttribute))
-        //            {
-        //                var fieldType = field.FieldType;
-
-        //                var firstConstructor = DIContainer.dicBinder[fieldType.ToString()].GetConstructors()[0];
-        //                var instance = firstConstructor.Invoke(null);
-        //                var dependency = Activator.CreateInstance(DIContainer.dicBinder[fieldType.ToString()]);
-        //                Debug.Log("Dependency type " + dependency.GetType());
-        //                field.SetValue(instance, dependency);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //
-        GameObject[] allObject = FindObjectsOfType<GameObject>();
-
-        foreach(var obj in allObject)
-        {
-            if (obj.GetComponent<MonoBinding>())
+            foreach (var installer in installList)
             {
-                var comp = obj.GetComponent<MonoBinding>();
+                installer.InstallBinding();
+            }
 
-                FieldInfo[] fields = comp.GetType().GetFields(m_Flag);
+            s_Instance = this;
 
-                foreach (FieldInfo field in fields)
+            var injectAttribute = typeof(InjectItAttribute);
+            var notMonoAttribute = typeof(NotMonoAttribute);
+            //
+            var assembly = Assembly.GetExecutingAssembly();
+
+            var types = assembly.GetTypes();
+
+            //
+            GameObject[] allObject = FindObjectsOfType<GameObject>();
+
+            foreach (var obj in allObject)
+            {
+                if (obj.GetComponent<MonoBinding>())
                 {
-                    if (Attribute.IsDefined(field, injectAttribute))
-                    {
-                        var fieldType = field.FieldType;
-                        Debug.Log("field type is " + fieldType.ToString());
-                        var dependency = Activator.CreateInstance(DIContainer.dicBinder[fieldType.ToString()]);
+                    var comp = obj.GetComponent<MonoBinding>();
 
-                        field.SetValue(comp, dependency);
+                    FieldInfo[] fields = comp.GetType().GetFields(m_Flag);
+
+                    foreach (FieldInfo field in fields)
+                    {
+                        if (Attribute.IsDefined(field, injectAttribute))
+                        {
+                            var fieldType = field.FieldType;
+                            Debug.Log("field type is " + fieldType.ToString());
+                            var dependency = Activator.CreateInstance(DIContainer.dicBinder[fieldType.ToString()]);
+
+                            field.SetValue(comp, dependency);
+                        }
                     }
+
+                    MethodInfo[] methods = comp.GetType().GetMethods(m_Flag);
+                    if (methods.Length > 0)
+                    {
+                        foreach (MethodInfo method in methods)
+                        {
+                            if (Attribute.IsDefined(method, injectAttribute))
+                            {
+                                if (!method.GetParameters().Any())
+                                {
+                                    Debug.LogWarningFormat("Method {0} not contain any dependency", method);
+                                }
+                                else
+                                {
+                                    var parameters = method.GetParameters();
+                                    var paramDependency = new List<object>();
+
+                                    foreach (var param in parameters)
+                                    {
+                                        var dependency = Activator.CreateInstance(DIContainer.dicBinder[param.ParameterType.ToString()]);
+                                        paramDependency.Add(dependency);
+                                    }
+                                    DIContainer.dicMethodInjected.Add(method.Name, method);
+                                    DIContainer.dicMethodObj.Add(method.Name, comp);
+                                    DIContainer.dicMethodParam.Add(method.Name, paramDependency);
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
+
+
+
+
         }
-
-        
-
-        
     }
 }
 
-public class DemoAttribute : Attribute
-{
-
-}

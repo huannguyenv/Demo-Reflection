@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[AttributeUsage(AttributeTargets.Class)]
-public class NotMonoAttribute : Attribute
+namespace InjectIt
 {
+    [AttributeUsage(AttributeTargets.Class)]
+    public class NotMonoAttribute : Attribute
+    {
+    }
 }

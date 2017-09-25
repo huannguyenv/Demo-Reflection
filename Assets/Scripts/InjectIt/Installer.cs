@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Installer : MonoBehaviour
+namespace InjectIt
 {
-    public abstract void InstallBinding();
+    public abstract class Installer : MonoBehaviour
+    {
+        public abstract void InstallBinding();
+    }
 }

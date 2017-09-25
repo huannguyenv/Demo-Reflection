@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class InjectItAttribute : Attribute
+namespace InjectIt
 {
+    public class InjectItAttribute : Attribute
+    {
+    }
 }

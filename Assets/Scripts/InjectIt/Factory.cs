@@ -4,25 +4,38 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-public static class Factory
+namespace InjectIt
 {
-    public static void Inject<T>(ref T obj)
+    public static class Factory
     {
-        var type = obj.GetType();
-        Debug.Log("type is " + type);
-
-        var inject = typeof(InjectItAttribute);
-
-        FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        Debug.Log("field count " + fields.Length);
-
-        foreach(var field in fields)
+        public static void Inject<T>(ref T obj)
         {
-            if (Attribute.IsDefined(field, inject))
+            var type = obj.GetType();
+            Debug.Log("type is " + type);
+
+            var inject = typeof(InjectItAttribute);
+
+            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            Debug.Log("field count " + fields.Length);
+
+            foreach (var field in fields)
             {
-                Debug.Log("field type " + field);
-                var dependency = Activator.CreateInstance(DIContainer.dicBinder[field.FieldType.ToString()]);
-                field.SetValue(obj, dependency);
+                if (Attribute.IsDefined(field, inject))
+                {
+                    Debug.Log("field type " + field);
+                    var dependency = Activator.CreateInstance(DIContainer.dicBinder[field.FieldType.ToString()]);
+                    field.SetValue(obj, dependency);
+                }
+            }
+        }
+
+        public static void ExecuteMethod(string methodName)
+        {
+            if (DIContainer.dicMethodInjected.ContainsKey(methodName))
+            {
+                var obj = DIContainer.dicMethodObj[methodName];
+                var dependency = DIContainer.dicMethodParam[methodName];
+                DIContainer.dicMethodInjected[methodName].Invoke(obj, dependency.ToArray());
             }
         }
     }

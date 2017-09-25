@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using InjectIt;
 
-[Temp]
 public interface TempInterface
 {
     void Print();
