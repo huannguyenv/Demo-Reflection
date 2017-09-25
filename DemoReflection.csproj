@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\AnotherClass.cs" />
     <Compile Include="Assets\Scripts\AnotherInterface.cs" />
     <Compile Include="Assets\Scripts\DemoInstaller.cs" />
+    <Compile Include="Assets\Scripts\HiepSuggest.cs" />
     <Compile Include="Assets\Scripts\IInstaller.cs" />
     <Compile Include="Assets\Scripts\InjectIt\ContainerContext.cs" />
     <Compile Include="Assets\Scripts\InjectIt\DIContainer.cs" />
@@ -89,9 +90,9 @@
     <Compile Include="Assets\Scripts\InjectIt\Installer.cs" />
     <Compile Include="Assets\Scripts\InjectIt\MonoBinding.cs" />
     <Compile Include="Assets\Scripts\InjectIt\NotMonoAttribute.cs" />
+    <Compile Include="Assets\Scripts\NewClass.cs" />
     <Compile Include="Assets\Scripts\NotMono.cs" />
     <Compile Include="Assets\Scripts\Sample.cs" />
-    <Compile Include="Assets\Scripts\TempAttribute.cs" />
     <Compile Include="Assets\Scripts\TempClass.cs" />
     <Compile Include="Assets\Scripts\TempInterface.cs" />
   </ItemGroup>
